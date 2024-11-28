@@ -308,15 +308,13 @@ setIsBgColor(false)
             border: "1px solid #000000",
             backgroundColor: canvasColor,
           }}
-          onTouchMove={draw}
-          onTouchEnd={stopDrawing}
-          onTouchCancel={stopDrawing}
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseOut={stopDrawing}
-
           onTouchStart={(e) => startDrawing(e.nativeEvent)}
+          onTouchMove={(e) => draw(e.nativeEvent)}
+          onTouchEnd={stopDrawing}
         />
       </div>
     </div>
