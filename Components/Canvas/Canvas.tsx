@@ -315,6 +315,8 @@ setIsBgColor(false)
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseOut={stopDrawing}
+
+          onTouchStart={(e) => startDrawing(e.nativeEvent)}
         />
       </div>
     </div>
