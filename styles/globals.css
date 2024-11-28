@@ -49,3 +49,14 @@ body {
     
   }
 }  */
+
+
+@media (max-width: 768px) {
+  .canvas-container {
+    height: 100vh;
+  }
+
+  canvas {
+    height: 100% !important
+  }
+}
