@@ -301,8 +301,8 @@ setIsBgColor(false)
 
 
   return (
-    <div className="flex h-screen">
-      <div className="flex flex-col justify-between items-center bg-gray-100  w-[80px] px-4 py-4">
+    <div className="flex h-screen max-h-screen border-4 border-gray-800">
+      <div className="flex flex-col justify-between items-center bg-gray-100  w-[80px] px-4 py-2">
 <div className=' relative'>
 
 <button className="text-xl font-bold" onClick={()=>{
@@ -362,7 +362,7 @@ setIsBgColor(false)
         </button>
       </div>
 
-      <div className="canvas-container relative overflow-hidden flex-1">
+      <div className="canvas-container max-h-full relative overflow-hidden flex-1">
         <canvas
           ref={canvasRef}
           width={windowWidth}
