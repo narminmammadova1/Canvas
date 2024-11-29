@@ -162,7 +162,7 @@ setIsBgColor(false)
     }
   };
 
-  const changeBackgroundColor = (color: string) => {
+   const changeBackgroundColor = (color: string) => {
     if (canvasRef.current && ctxRef.current) {
       setCanvasColor(color);
       sessionStorage.setItem('canvasColor', color);
@@ -236,6 +236,69 @@ setIsBgColor(false)
     refreshPage();
     saveImage();
   };
+
+
+  
+  
+  const startTouchDrawing = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (canvasRef.current && ctxRef.current) {
+      setIsDrawing(true);
+      const { clientX, clientY } = e.touches[0]; 
+            const rect = canvasRef.current.getBoundingClientRect(); 
+  
+      const offsetX = clientX - rect.left; 
+      const offsetY = clientY - rect.top;
+  
+      setLastX(offsetX);
+      setLastY(offsetY);
+  
+      ctxRef.current.beginPath();
+      ctxRef.current.moveTo(offsetX, offsetY);
+      ctxRef.current.lineWidth = brushSize;
+      ctxRef.current.strokeStyle = brushColor;
+      setIsStart(true);
+    }
+  };
+  
+  const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
+  
+    const { clientX, clientY } = e.touches[0];
+    const rect = canvasRef.current.getBoundingClientRect(); // Canvas'ın sayfadaki konumunu alıyoruz
+  
+    const offsetX = clientX - rect.left; // Konum farkını hesaplıyoruz
+    const offsetY = clientY - rect.top;
+  
+    if (isEraser) {
+      ctxRef.current.clearRect(offsetX - eraserSize / 2, offsetY - eraserSize / 2, eraserSize, eraserSize);
+    } else if (isPen) {
+      ctxRef.current.lineTo(offsetX, offsetY);
+      ctxRef.current.stroke();
+    }
+  
+    setLastX(offsetX);
+    setLastY(offsetY);
+  };
+  
+  const stopTouchDrawing = () => {
+    if (canvasRef.current && ctxRef.current) {
+      setIsDrawing(false);
+      ctxRef.current.closePath();
+      setDrawingHistory([
+        ...drawingHistory,
+        ctxRef.current.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height),
+      ]);
+      saveCanvasImage();
+    }
+  };
+  
+ 
+  
+
+
+
+
+
 
   return (
     <div className="flex h-screen">
@@ -312,9 +375,9 @@ setIsBgColor(false)
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseOut={stopDrawing}
-          onTouchStart={(e) => startDrawing(e.nativeEvent)}
-          onTouchMove={(e) => draw(e.nativeEvent)}
-          onTouchEnd={stopDrawing}
+          onTouchStart={startTouchDrawing}  
+          onTouchMove={drawTouch}         
+          onTouchEnd={stopTouchDrawing}  
         />
       </div>
     </div>
