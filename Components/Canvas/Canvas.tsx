@@ -364,7 +364,7 @@ setIsBgColor(false)
 
 
   return (
-    <div className="flex max-h-screen h-screen border-4 border-gray-800">
+    <div className="flex min-h-screen max-h-screen h-screen border-4 border-gray-800">
       <div className="flex max-h-full flex-col justify-between items-center bg-gray-100  w-[80px] px-4 py-2">
 <div className=' relative'>
 
@@ -473,7 +473,7 @@ setIsBgColor(false)
   </div>
  )} 
 
-      <div className="canvas-container max-h-full overflow-hidden flex-1">
+      <div className="canvas-container max-h-full min-h-full overflow-hidden flex-1">
         <canvas
           ref={canvasRef}
           width={windowWidth}
