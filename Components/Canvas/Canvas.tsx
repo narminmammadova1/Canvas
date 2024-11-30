@@ -366,7 +366,7 @@ setIsBgColor(false)
   return (
     <div className="flex-col  border-4 border-gray-800">
       <div className='flex '>
-      <div className="flex flex-col justify-between mb-8 items-center bg-gray-100  w-[80px] px-4 py-2">
+      <div className="flex flex-col justify-between mb-16  lg:mb-0 items-center bg-gray-100  w-[80px] px-4 py-2">
 <div className=' relative'>
 
 <button className="text-xl font-bold" onClick={()=>{
