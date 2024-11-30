@@ -364,8 +364,9 @@ setIsBgColor(false)
 
 
   return (
-    <div className="flex min-h-screen max-h-screen h-screen border-4 border-gray-800">
-      <div className="flex max-h-full flex-col justify-between items-center bg-gray-100  w-[80px] px-4 py-2">
+    <div className="flex-col  border-4 border-gray-800">
+      <div className='flex '>
+      <div className="flex flex-col justify-between mb-8 items-center bg-gray-100  w-[80px] px-4 py-2">
 <div className=' relative'>
 
 <button className="text-xl font-bold" onClick={()=>{
@@ -449,13 +450,13 @@ setIsBgColor(false)
         </div>
       </div>
       {loading && (
-    <div className="loading-overlay z-50 fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-600 opacity-50">
+    <div className="loading-overlay z-50 fixed top-0 left-0 w-full  flex justify-center items-center bg-gray-600 opacity-50">
           <div className="spinner border-t-4 border-blue-500 border-solid rounded-full w-16 h-16 animate-spin"></div>
        </div>
      )}
 
 
- {modal && (   <div className=' bg-red-800 w-full  fixed flex justify-center items-center top-0 right-0 min-h-full bg-opacity-50'>
+ {modal && (   <div className=' bg-red-800 w-full  fixed flex justify-center items-center top-0 right-0 min-h-full- bg-opacity-50'>
     <div className='w-[30%] h-[150px] flex justify-center items-center rounded-md bg-black '>
        <div className='flex gap-4  m-auto'>
          <button onClick={()=>{saveImage()
@@ -473,14 +474,15 @@ setIsBgColor(false)
   </div>
  )} 
 
-      <div className="canvas-container max-h-full min-h-full overflow-hidden flex-1">
-        <canvas
+      <div className="canvas-container overflow-hidden flex-1">
+        <canvas className=''
           ref={canvasRef}
           width={windowWidth}
           height={windowHeight}
           style={{
             border: "1px solid #000000",
             backgroundColor: canvasColor,
+            
           }}
           onMouseDown={startDrawing}
           onMouseMove={draw}
@@ -491,6 +493,10 @@ setIsBgColor(false)
           onTouchEnd={stopTouchDrawing}  
         />
       </div>
+        
+      </div>
+      {/* <div className='h-44 w-full bg-amber-400'>canvasss</div> */}
+    
     </div>
   );
 };
