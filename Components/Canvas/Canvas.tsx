@@ -252,6 +252,7 @@ setIsBgColor(false)
   
   
   const startTouchDrawing = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
     if (canvasRef.current && ctxRef.current) {
       setIsDrawing(true);
       const { clientX, clientY } = e.touches[0]; 
@@ -272,6 +273,7 @@ setIsBgColor(false)
   };
   
   const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
+   e.preventDefault()
     if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
   
     const { clientX, clientY } = e.touches[0];
