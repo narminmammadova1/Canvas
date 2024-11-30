@@ -274,6 +274,8 @@ setIsBgColor(false)
   
   const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
    e.preventDefault()
+   setIsPenColor(false)
+setIsBgColor(false)
     if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
   
     const { clientX, clientY } = e.touches[0];
@@ -283,6 +285,8 @@ setIsBgColor(false)
     const offsetY = clientY - rect.top;
   
     if (isEraser) {
+      setIsEraserSize(false)
+
       ctxRef.current.clearRect(offsetX - eraserSize / 2, offsetY - eraserSize / 2, eraserSize, eraserSize);
     } else if (isPen) {
       ctxRef.current.lineTo(offsetX, offsetY);
@@ -366,7 +370,7 @@ setIsBgColor(false)
   return (
     <div className="flex-col  border-4 border-gray-800">
       <div className='flex '>
-      <div className="flex flex-col justify-between mb-16  lg:mb-0 items-center bg-gray-100  w-[80px] px-4 py-2">
+      <div className="flex flex-col justify-between pb-4  lg:pb-0 items-center bg-gray-100  w-[80px] px-4 py-2">
 <div className=' relative'>
 
 <button className="text-xl font-bold" onClick={()=>{
@@ -450,14 +454,14 @@ setIsBgColor(false)
         </div>
       </div>
       {loading && (
-    <div className="loading-overlay z-50 fixed top-0 left-0 w-full  flex justify-center items-center bg-gray-600 opacity-50">
+    <div className="loading-overlay z-50 fixed top-0 left-0 w-full h-full  flex justify-center items-center bg-gray-600 opacity-50">
           <div className="spinner border-t-4 border-blue-500 border-solid rounded-full w-16 h-16 animate-spin"></div>
        </div>
      )}
 
 
- {modal && (   <div className=' bg-red-800 w-full  fixed flex justify-center items-center top-0 right-0 min-h-full- bg-opacity-50'>
-    <div className='w-[30%] h-[150px] flex justify-center items-center rounded-md bg-black '>
+ {modal && (   <div className=' bg-red-800 w-full h-full  fixed flex justify-center items-center top-0 right-0 min-h-full- bg-opacity-50'>
+    <div className='w-full mx-6 lg:mx-0 lg:w-[30%] h-[150px] flex justify-center items-center rounded-md bg-black '>
        <div className='flex gap-4  m-auto'>
          <button onClick={()=>{saveImage()
         setLoading(true)
@@ -467,8 +471,8 @@ setIsBgColor(false)
           setLoading(false)
         },1000)
 
-         } } className=' w-28 h-8 rounded-md bg-white'>Save image</button>
-       <button onClick={()=>{setModal(false)}} className='  w-28 h-8  rounded-md bg-red-600'>Cancel</button>
+         } } className='w-28 h-8 test-[10px] rounded-md bg-white'>Save image</button>
+       <button onClick={()=>{setModal(false)}} className='w-28 h-8  rounded-md bg-red-600'>Cancel</button>
      </div>
     </div>
   </div>
