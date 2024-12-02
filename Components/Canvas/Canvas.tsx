@@ -29,7 +29,6 @@ const Canvas = () => {
 const [isPenColor,setIsPenColor]=useState(false)
 const [isBgColor,setIsBgColor]=useState(false)
 const [isEraserSize,setIsEraserSize]=useState(false)
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setWindowWidth(window.innerWidth);
@@ -38,6 +37,19 @@ const [isEraserSize,setIsEraserSize]=useState(false)
       const handleResize = () => {
         setWindowWidth(window.innerWidth);
         setWindowHeight(window.innerHeight);
+      
+        const ctx = ctxRef.current;
+
+        const lastDrawing = drawingHistory[drawingHistory.length - 1];
+        if (lastDrawing) {
+            ctx?.putImageData(lastDrawing, 0, 0);
+        }
+    
+
+        
+        
+  
+
       };
 
       window.addEventListener("resize", handleResize);
@@ -45,7 +57,18 @@ const [isEraserSize,setIsEraserSize]=useState(false)
         window.removeEventListener("resize", handleResize);
       };
     }
-  }, []);
+  }, [drawingHistory]);
+
+
+
+
+
+
+  
+
+
+
+  
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -76,7 +99,22 @@ const [isEraserSize,setIsEraserSize]=useState(false)
         ctx?.drawImage(image, 0, 0);
       };
     }
+
+    const savedIsStart = localStorage.getItem('isStart');
+
+    if (savedIsStart === 'true') {
+      setIsStart(true);
+    } else {
+      setIsStart(false);
+    }
+
+
+
   }, []);
+
+
+
+  
 
   const startDrawing = (e: any) => {
     // setIsPen(false)
@@ -91,7 +129,16 @@ const [isEraserSize,setIsEraserSize]=useState(false)
       ctxRef.current.moveTo(offsetX, offsetY);
       ctxRef.current.lineWidth = brushSize;
       ctxRef.current.strokeStyle = brushColor;
-      setIsStart(true);
+      // setIsStart(true);
+      localStorage.setItem('isStart', 'true')  
+      const savedIsStart = localStorage.getItem('isStart');
+
+      if (savedIsStart === 'true') {
+        setIsStart(true);
+      } else {
+        setIsStart(false);
+      }
+
     }
   };
 
@@ -108,7 +155,7 @@ setIsBgColor(false)
       setIsEraserSize(false)
       ctxRef.current.clearRect(offsetX - eraserSize / 2, offsetY - eraserSize / 2, eraserSize, eraserSize);
       canvasRef.current.style.backgroundColor = canvasColor;
-      setIsStart(true);
+      // setIsStart(true);
     } else if (isPen) {
       ctxRef.current.lineTo(offsetX, offsetY);
       ctxRef.current.stroke();
@@ -141,7 +188,9 @@ setIsBgColor(false)
     sessionStorage.removeItem("canvasImageData");
     setDrawingHistory([]);
     setRedoHistory([]);
-    setIsStart(false);
+    // setIsStart(false);
+localStorage.setItem("isStart","false")
+
   };
 
   const undo = () => {
@@ -279,9 +328,9 @@ setIsBgColor(false)
     if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
   
     const { clientX, clientY } = e.touches[0];
-    const rect = canvasRef.current.getBoundingClientRect(); // Canvas'ın sayfadaki konumunu alıyoruz
+    const rect = canvasRef.current.getBoundingClientRect();
   
-    const offsetX = clientX - rect.left; // Konum farkını hesaplıyoruz
+    const offsetX = clientX - rect.left; 
     const offsetY = clientY - rect.top;
   
     if (isEraser) {
@@ -325,11 +374,9 @@ setIsBgColor(false)
             const canvas = canvasRef.current;
             const ctx = ctxRef.current;
             
-            // Yeni resmi çizmeden önce canvas'ı temizle
             if (canvas && ctx) {
               ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-              // Resmin canvas boyutlarına sığacak şekilde yeniden boyutlandırılması
               const canvasWidth = canvas.width;
               const canvasHeight = canvas.height;
   
@@ -337,13 +384,11 @@ setIsBgColor(false)
               let imgWidth = canvasWidth;
               let imgHeight = imgWidth / imageAspectRatio;
   
-              // Resmin yüksekliği canvas'ın yüksekliğini aşarsa, boyutları yeniden ayarla
               if (imgHeight > canvasHeight) {
                 imgHeight = canvasHeight;
                 imgWidth = imgHeight * imageAspectRatio;
               }
   
-              // Resmi canvas üzerine ortalayarak çiz
               const x = (canvasWidth - imgWidth) / 2;
               const y = (canvasHeight - imgHeight) / 2;
   
@@ -365,7 +410,7 @@ setIsBgColor(false)
 
 
 
-
+  const disabledChange=isStart
 
   return (
     <div className="flex-col  border-4 border-gray-800">
@@ -373,7 +418,7 @@ setIsBgColor(false)
       <div className="flex flex-col justify-between pb-4  lg:pb-0 items-center bg-gray-100  w-[80px] px-4 py-2">
 <div className=' relative'>
 
-<button className="text-xl font-bold" onClick={()=>{
+<button disabled={disabledChange} className={`text-xl font-bold ${disabledChange ? "opacity-50 cursor-not-allowed" : ""}`}onClick={()=>{
   setIsBgColor(true)
 }}>
         BG
@@ -479,7 +524,7 @@ setIsBgColor(false)
  )} 
 
       <div className="canvas-container overflow-hidden flex-1">
-        <canvas className=''
+        <canvas className={` ${isEraser ? "cursor-eraser" : isPen ? "cursor-pen": ""} `}
           ref={canvasRef}
           width={windowWidth}
           height={windowHeight}
