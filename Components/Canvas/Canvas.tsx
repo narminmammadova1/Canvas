@@ -370,12 +370,14 @@ setIsBgColor(false)
               let imgWidth = canvasWidth;
               let imgHeight = imgWidth / imageAspectRatio;
   
-              if (imgHeight > canvasHeight) {
+              //  if (imgHeight > canvasHeight) {
                 imgHeight = canvasHeight;
-                imgWidth = imgHeight * imageAspectRatio;
-              }
+              // //   // imgWidth = imgHeight * imageAspectRatio;
+
+                
+              //  }
   
-              const x = (canvasWidth - imgWidth) / 2;
+              const x = (canvasWidth - imgWidth) /2;
               const y = (canvasHeight - imgHeight) / 2;
   
               ctx.drawImage(img, x, y, imgWidth, imgHeight);
@@ -422,7 +424,7 @@ setIsPlaying(!isPlaying)
   return (
     <div className="flex-col  border-4 border-gray-800">
       <div className='flex '>
-      <div className="flex flex-col justify-between pb-4  lg:pb-2 items-center bg-gray-100  w-[80px] px-4 py-2">
+      <div className="flex flex-col justify-between py-6  lg:py-2 items-center bg-gray-100 w-[50px] lg:w-[80px] px-4">
       <button onClick={togleSound} className=' absolute   left-2 top-2'>
       {isPlaying ? <FiBell /> : <FiBellOff />}
 
