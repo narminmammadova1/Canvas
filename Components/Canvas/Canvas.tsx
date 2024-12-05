@@ -270,7 +270,6 @@ localStorage.setItem("isStart","false")
   // };
 
   const handleSave = async() => {
-        // refreshPage()
     
        setTimeout(() => {
       
