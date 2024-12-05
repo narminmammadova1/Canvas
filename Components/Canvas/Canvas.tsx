@@ -174,7 +174,7 @@ localStorage.setItem("isStart","false")
   };
 
   const undo = () => {
-    if (drawingHistory.length > 0) {
+    if (drawingHistory.length > 1) {
      
       const lastState = drawingHistory[drawingHistory.length -2] 
       const ctx = ctxRef.current;
