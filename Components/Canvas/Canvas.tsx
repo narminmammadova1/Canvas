@@ -33,7 +33,6 @@ const Canvas = () => {
 const [isPenColor,setIsPenColor]=useState(false)
 const [isBgColor,setIsBgColor]=useState(false)
 const [isEraserSize,setIsEraserSize]=useState(false)
-
 const [isPlaying,setIsPlaying]=useState(true)
 
   useEffect(() => {
@@ -176,11 +175,14 @@ localStorage.setItem("isStart","false")
 
   const undo = () => {
     if (drawingHistory.length > 0) {
-      const lastState = drawingHistory[drawingHistory.length - 1];
+     
+      const lastState = drawingHistory[drawingHistory.length -1] 
       const ctx = ctxRef.current;
       ctx?.putImageData(lastState, 0, 0);
       setDrawingHistory(drawingHistory.slice(0, -1));
       setRedoHistory([lastState, ...redoHistory]);
+      console.log("unoooooo",drawingHistory.length);
+      
     }
   };
 
@@ -205,7 +207,7 @@ localStorage.setItem("isStart","false")
 
   const saveCanvasImage = () => {
     if (canvasRef.current) {
-      const dataURL = canvasRef.current.toDataURL("image/png");
+      const dataURL = canvasRef.current.toDataURL("image/png") ;
       sessionStorage.setItem('canvasImageData', dataURL);
     }
   };
@@ -235,37 +237,37 @@ localStorage.setItem("isStart","false")
     }
   };
 
-  const refreshPage = () => {
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
+  // const refreshPage = () => {
+  //   const canvas = canvasRef.current;
+  //   const ctx = ctxRef.current;
 
-    if (canvas && ctx) {
-      ctxRef.current = canvas.getContext("2d");
-    }
+  //   if (canvas && ctx) {
+  //     ctxRef.current = canvas.getContext("2d");
+  //   }
 
-    const savedCanvasColor = sessionStorage.getItem('canvasColor');
-    const savedImageData = sessionStorage.getItem('canvasImageData');
+  //   const savedCanvasColor = sessionStorage.getItem('canvasColor');
+  //   const savedImageData = sessionStorage.getItem('canvasImageData');
 
-    if (savedCanvasColor && canvas && ctx) {
-      setCanvasColor(savedCanvasColor);
-      ctx.fillStyle = savedCanvasColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    } else {
-      setCanvasColor("#ffffff");
-      if (canvas && ctx) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
-    }
+  //   if (savedCanvasColor && canvas && ctx) {
+  //     setCanvasColor(savedCanvasColor);
+  //     ctx.fillStyle = savedCanvasColor;
+  //     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  //   } else {
+  //     setCanvasColor("#ffffff");
+  //     if (canvas && ctx) {
+  //       ctx.fillStyle = "#ffffff";
+  //       ctx.fillRect(0, 0, canvas.width, canvas.height);
+  //     }
+  //   }
 
-    if (savedImageData && ctx) {
-      const image = new Image();
-      image.src = savedImageData;
-      image.onload = () => {
-        ctx.drawImage(image, 0, 0);
-      };
-    }
-  };
+  //   if (savedImageData && ctx) {
+  //     const image = new Image();
+  //     image.src = savedImageData;
+  //     image.onload = () => {
+  //       ctx.drawImage(image, 0, 0);
+  //     };
+  //   }
+  // };
 
   const handleSave = async() => {
         // refreshPage()
@@ -281,7 +283,7 @@ localStorage.setItem("isStart","false")
      };
 
   const startTouchDrawing = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault()
+    // e.preventDefault()
     if (canvasRef.current && ctxRef.current) {
       setIsDrawing(true);
       const { clientX, clientY } = e.touches[0]; 
@@ -301,7 +303,7 @@ localStorage.setItem("isStart","false")
   };
   
   const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
-   e.preventDefault()
+  //  e.preventDefault()
    setIsPenColor(false)
 setIsBgColor(false)
     if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
