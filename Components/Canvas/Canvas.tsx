@@ -268,13 +268,15 @@ localStorage.setItem("isStart","false")
   };
 
   const handleSave = async() => {
-        refreshPage()
+        // refreshPage()
     
        setTimeout(() => {
       
        setModal(true)
     
        }, 100);
+
+       
          
      };
 
@@ -347,7 +349,7 @@ setIsBgColor(false)
  
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-  
+  setIsStart(true)
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -509,9 +511,6 @@ setIsPlaying(!isPlaying)
           <CiExport className="cursor-pointer" size={30} />
         </button>
         
-       
-
-
 
         <div className=' relative'>
 
@@ -544,9 +543,10 @@ setIsPlaying(!isPlaying)
     <div className='w-full mx-6 lg:mx-0 lg:w-[30%] h-[150px] flex justify-center items-center rounded-md bg-black '>
        <div className='flex gap-4  m-auto'>
          <button onClick={()=>{saveImage()
+
         setLoading(true)
        setTimeout(()=>{
-
+// refreshPage()
            setModal(false)
           setLoading(false)
         },1000)
