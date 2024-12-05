@@ -1,3 +1,4 @@
+import { animated } from '@react-spring/web'
 
 import React, { useEffect, useRef, useState } from 'react';
 import { SlPencil } from "react-icons/sl";
@@ -5,6 +6,9 @@ import { FaUndo, FaRedo } from "react-icons/fa";
 import { LuEraser } from "react-icons/lu";
 import { TbHttpDelete } from "react-icons/tb";
 import { CiImport, CiExport } from "react-icons/ci";
+// import AnimatedSection1 from '../AnimatedSection/AnimatedSection1';
+import { FiBellOff,FiBell  } from "react-icons/fi";
+
 
 const Canvas = () => {
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
@@ -29,6 +33,9 @@ const Canvas = () => {
 const [isPenColor,setIsPenColor]=useState(false)
 const [isBgColor,setIsBgColor]=useState(false)
 const [isEraserSize,setIsEraserSize]=useState(false)
+
+const [isPlaying,setIsPlaying]=useState(true)
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setWindowWidth(window.innerWidth);
@@ -44,12 +51,6 @@ const [isEraserSize,setIsEraserSize]=useState(false)
         if (lastDrawing) {
             ctx?.putImageData(lastDrawing, 0, 0);
         }
-    
-
-        
-        
-  
-
       };
 
       window.addEventListener("resize", handleResize);
@@ -59,17 +60,7 @@ const [isEraserSize,setIsEraserSize]=useState(false)
     }
   }, [drawingHistory]);
 
-
-
-
-
-
-  
-
-
-
-  
-
+////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const canvas = canvasRef.current;
     ctxRef.current = canvas && canvas.getContext("2d");
@@ -101,20 +92,14 @@ const [isEraserSize,setIsEraserSize]=useState(false)
     }
 
     const savedIsStart = localStorage.getItem('isStart');
-
     if (savedIsStart === 'true') {
       setIsStart(true);
     } else {
       setIsStart(false);
     }
-
-
-
   }, []);
 
 
-
-  
 
   const startDrawing = (e: any) => {
     // setIsPen(false)
@@ -130,15 +115,6 @@ const [isEraserSize,setIsEraserSize]=useState(false)
       ctxRef.current.lineWidth = brushSize;
       ctxRef.current.strokeStyle = brushColor;
       // setIsStart(true);
-      localStorage.setItem('isStart', 'true')  
-      const savedIsStart = localStorage.getItem('isStart');
-
-      if (savedIsStart === 'true') {
-        setIsStart(true);
-      } else {
-        setIsStart(false);
-      }
-
     }
   };
 
@@ -147,21 +123,26 @@ const [isEraserSize,setIsEraserSize]=useState(false)
 setIsPenColor(false)
 setIsBgColor(false)
 
-    // const { offsetX, offsetY } = e.nativeEvent;
     const { offsetX, offsetY } = e.touches ? e.touches[0] : e.nativeEvent;
+    localStorage.setItem('isStart', 'true')  
+    const savedIsStart = localStorage.getItem('isStart');
 
+    if (savedIsStart === 'true') {
+      setIsStart(true);
+    } else {
+      setIsStart(false);
+    }
 
     if (isEraser && canvasRef.current) {
       setIsEraserSize(false)
       ctxRef.current.clearRect(offsetX - eraserSize / 2, offsetY - eraserSize / 2, eraserSize, eraserSize);
       canvasRef.current.style.backgroundColor = canvasColor;
-      // setIsStart(true);
+      setIsStart(true)
     } else if (isPen) {
       ctxRef.current.lineTo(offsetX, offsetY);
       ctxRef.current.stroke();
     }
-
-    setLastX(offsetX);
+ setLastX(offsetX);
     setLastY(offsetY);
   };
 
@@ -188,7 +169,7 @@ setIsBgColor(false)
     sessionStorage.removeItem("canvasImageData");
     setDrawingHistory([]);
     setRedoHistory([]);
-    // setIsStart(false);
+    setIsStart(false);
 localStorage.setItem("isStart","false")
 
   };
@@ -288,7 +269,6 @@ localStorage.setItem("isStart","false")
 
   const handleSave = async() => {
         refreshPage()
-        
     
        setTimeout(() => {
       
@@ -298,8 +278,6 @@ localStorage.setItem("isStart","false")
          
      };
 
-  
-  
   const startTouchDrawing = (e: React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault()
     if (canvasRef.current && ctxRef.current) {
@@ -317,7 +295,6 @@ localStorage.setItem("isStart","false")
       ctxRef.current.moveTo(offsetX, offsetY);
       ctxRef.current.lineWidth = brushSize;
       ctxRef.current.strokeStyle = brushColor;
-      setIsStart(true);
     }
   };
   
@@ -333,6 +310,15 @@ setIsBgColor(false)
     const offsetX = clientX - rect.left; 
     const offsetY = clientY - rect.top;
   
+    localStorage.setItem('isStart', 'true')  
+    const savedIsStart = localStorage.getItem('isStart');
+
+    if (savedIsStart === 'true') {
+      setIsStart(true);
+    } else {
+      setIsStart(false);
+    }
+
     if (isEraser) {
       setIsEraserSize(false)
 
@@ -407,19 +393,46 @@ setIsBgColor(false)
     }, 1000);
   };
 
+//audio ///
 
+  const clickSound=()=>{
+    let audio =new Audio("click.wav")
 
+if (isPlaying){
+  audio.play()
+
+}
+  }
+ const togleSound=()=>{
+  let audio =new Audio("click.wav")
+
+if(isPlaying){
+  audio.pause()
+  audio.currentTime = 0;
+}
+else{
+  audio.play()
+}
+setIsPlaying(!isPlaying)
+}
+////////
 
   const disabledChange=isStart
 
   return (
     <div className="flex-col  border-4 border-gray-800">
       <div className='flex '>
-      <div className="flex flex-col justify-between pb-4  lg:pb-0 items-center bg-gray-100  w-[80px] px-4 py-2">
-<div className=' relative'>
+      <div className="flex flex-col justify-between pb-4  lg:pb-2 items-center bg-gray-100  w-[80px] px-4 py-2">
+      <button onClick={togleSound} className=' absolute   left-2 top-2'>
+      {isPlaying ? <FiBell /> : <FiBellOff />}
 
-<button disabled={disabledChange} className={`text-xl font-bold ${disabledChange ? "opacity-50 cursor-not-allowed" : ""}`}onClick={()=>{
-  setIsBgColor(true)
+      </button>
+
+<div className=' relative'>
+<button disabled={disabledChange} className={`text-xl font-bold  rounded-full ${disabledChange ? "opacity-50 cursor-not-allowed" : ""}`}onClick={()=>{
+ clickSound()
+ setIsBgColor(true)
+
 }}>
         BG
         </button>
@@ -430,17 +443,27 @@ setIsBgColor(false)
 )}
 </div>
     
-<button className="text-xl" onClick={clearCanvas}>
+<button className="text-xl rounded-full" onClick={()=>{
+  clickSound()
+  clearCanvas()
+}}>
           <TbHttpDelete className="cursor-pointer" size={30} />
         </button>
-        <button className="text-xl" onClick={undo}>
+        <button className="text-xl  rounded-full" onClick={()=>{
+          clickSound()
+          undo()}}>
           <FaUndo className="cursor-pointer" size={30} />
         </button>
-        <button className="text-xl" onClick={redo}>
+        
+        <button className="text-xl  rounded-full" onClick={()=>{
+          clickSound()
+          redo()}}>
           <FaRedo className="cursor-pointer" size={30} />
         </button>
         <div className=' relative'>
-        <button className="text-xl" onClick={eraser}>
+        <button className="text-xl  rounded-full" onClick={()=>{
+          clickSound()
+          eraser()}}>
           <LuEraser className="cursor-pointer" size={30} />
         </button>
 {isEraserSize && ( <input type="range" 
@@ -454,7 +477,9 @@ setIsBgColor(false)
       
 
         <div className=' relative'>
-        <button className="text-xl relative" onClick={pencil}>
+        <button className="text-xl relative  rounded-full" onClick={()=>{
+          clickSound()
+          pencil()}}>
           <SlPencil className="cursor-pointer" size={30} />
         </button>
         {isPenColor && (<div>
@@ -476,15 +501,23 @@ setIsBgColor(false)
          
         </div>
      
-        <button className="text-xl" onClick={handleSave}>
+        <button className="text-xl  rounded-full" onClick={()=>{
+          clickSound()
+          handleSave()}}>
           <CiExport className="cursor-pointer" size={30} />
         </button>
         
        
 
+
+
         <div className=' relative'>
 
-        <button className="text-xl">
+
+
+        <button onClick={()=>{
+          clickSound()
+        }} className="text-xl  rounded-full">
           <CiImport className="cursor-pointer" size={30} />
 
           <input 
@@ -544,7 +577,6 @@ setIsBgColor(false)
       </div>
         
       </div>
-      {/* <div className='h-44 w-full bg-amber-400'>canvasss</div> */}
     
     </div>
   );

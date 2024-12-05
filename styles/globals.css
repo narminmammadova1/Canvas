@@ -46,6 +46,16 @@ body {
 .cursor-brush{
   cursor: url('/brush.svg'),auto
 }
+
+button:active {
+  transform: translateY(4px); 
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
+  
+}
+
+
+
+
 /* 
 @layer utilities {
   .cursor-eraser {
