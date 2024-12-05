@@ -176,7 +176,7 @@ localStorage.setItem("isStart","false")
   const undo = () => {
     if (drawingHistory.length > 0) {
      
-      const lastState = drawingHistory[drawingHistory.length -1] 
+      const lastState = drawingHistory[drawingHistory.length -2] 
       const ctx = ctxRef.current;
       ctx?.putImageData(lastState, 0, 0);
       setDrawingHistory(drawingHistory.slice(0, -1));
