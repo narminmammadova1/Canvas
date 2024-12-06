@@ -174,7 +174,7 @@ localStorage.setItem("isStart","false")
   };
 
   const undo = () => {
-    if (drawingHistory.length > 1) {
+    if (drawingHistory.length >1) {
      
       const lastState = drawingHistory[drawingHistory.length -2] 
       const ctx = ctxRef.current;
@@ -184,16 +184,33 @@ localStorage.setItem("isStart","false")
       console.log("unoooooo",drawingHistory.length);
       
     }
+    else{
+      if (canvasRef.current && ctxRef.current) {
+        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+    
+   
   };
 
   const redo = () => {
-    if (redoHistory.length > 0) {
+    if (redoHistory.length > 1) {
       const lastRedoState = redoHistory[0];
       const ctx = ctxRef.current;
       ctx?.putImageData(lastRedoState, 0, 0);
       setDrawingHistory([...drawingHistory, lastRedoState]);
       setRedoHistory(redoHistory.slice(1));
     }
+    else if(redoHistory.length == 0){
+      
+      if (canvasRef.current && ctxRef.current) {
+        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        // ctxRef.current.fillStyle = "#ffffff";  // Beyaz bir arka plan ile temizle
+        ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    } 
+   
   };
 
    const changeBackgroundColor = (color: string) => {
@@ -274,6 +291,7 @@ localStorage.setItem("isStart","false")
        setTimeout(() => {
       
        setModal(true)
+       setLoading(false)
     
        }, 100);
 
