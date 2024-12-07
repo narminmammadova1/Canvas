@@ -1,4 +1,5 @@
-import { animated } from '@react-spring/web'
+
+// import { animated } from '@react-spring/web'
 
 import React, { useEffect, useRef, useState } from 'react';
 import { SlPencil } from "react-icons/sl";
@@ -33,6 +34,7 @@ const Canvas = () => {
 const [isPenColor,setIsPenColor]=useState(false)
 const [isBgColor,setIsBgColor]=useState(false)
 const [isEraserSize,setIsEraserSize]=useState(false)
+
 const [isPlaying,setIsPlaying]=useState(true)
 
   useEffect(() => {
@@ -43,7 +45,7 @@ const [isPlaying,setIsPlaying]=useState(true)
       const handleResize = () => {
         setWindowWidth(window.innerWidth);
         setWindowHeight(window.innerHeight);
-      
+
         const ctx = ctxRef.current;
 
         const lastDrawing = drawingHistory[drawingHistory.length - 1];
@@ -174,43 +176,27 @@ localStorage.setItem("isStart","false")
   };
 
   const undo = () => {
-    if (drawingHistory.length >1) {
-     
-      const lastState = drawingHistory[drawingHistory.length -2] 
+    if (drawingHistory.length > 0) {
+      const lastState = drawingHistory[drawingHistory.length - 1];
       const ctx = ctxRef.current;
       ctx?.putImageData(lastState, 0, 0);
       setDrawingHistory(drawingHistory.slice(0, -1));
       setRedoHistory([lastState, ...redoHistory]);
-      console.log("unoooooo",drawingHistory.length);
-      
     }
     else{
-      if (canvasRef.current && ctxRef.current) {
-        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      }
+      setDrawingHistory(drawingHistory.slice(0, -2));
+
     }
-    
-   
   };
 
   const redo = () => {
-    if (redoHistory.length > 1) {
+    if (redoHistory.length > 0) {
       const lastRedoState = redoHistory[0];
       const ctx = ctxRef.current;
       ctx?.putImageData(lastRedoState, 0, 0);
       setDrawingHistory([...drawingHistory, lastRedoState]);
       setRedoHistory(redoHistory.slice(1));
     }
-    else if(redoHistory.length == 0){
-      
-      if (canvasRef.current && ctxRef.current) {
-        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        // ctxRef.current.fillStyle = "#ffffff";  // Beyaz bir arka plan ile temizle
-        ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      }
-    } 
-   
   };
 
    const changeBackgroundColor = (color: string) => {
@@ -224,7 +210,7 @@ localStorage.setItem("isStart","false")
 
   const saveCanvasImage = () => {
     if (canvasRef.current) {
-      const dataURL = canvasRef.current.toDataURL("image/png") ;
+      const dataURL = canvasRef.current.toDataURL("image/png");
       sessionStorage.setItem('canvasImageData', dataURL);
     }
   };
@@ -254,83 +240,82 @@ localStorage.setItem("isStart","false")
     }
   };
 
-  // const refreshPage = () => {
-  //   const canvas = canvasRef.current;
-  //   const ctx = ctxRef.current;
+  const refreshPage = () => {
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
 
-  //   if (canvas && ctx) {
-  //     ctxRef.current = canvas.getContext("2d");
-  //   }
+    if (canvas && ctx) {
+      ctxRef.current = canvas.getContext("2d");
+    }
 
-  //   const savedCanvasColor = sessionStorage.getItem('canvasColor');
-  //   const savedImageData = sessionStorage.getItem('canvasImageData');
+    const savedCanvasColor = sessionStorage.getItem('canvasColor');
+    const savedImageData = sessionStorage.getItem('canvasImageData');
 
-  //   if (savedCanvasColor && canvas && ctx) {
-  //     setCanvasColor(savedCanvasColor);
-  //     ctx.fillStyle = savedCanvasColor;
-  //     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //   } else {
-  //     setCanvasColor("#ffffff");
-  //     if (canvas && ctx) {
-  //       ctx.fillStyle = "#ffffff";
-  //       ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //     }
-  //   }
+    if (savedCanvasColor && canvas && ctx) {
+      setCanvasColor(savedCanvasColor);
+      ctx.fillStyle = savedCanvasColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+      setCanvasColor("#ffffff");
+      if (canvas && ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
 
-  //   if (savedImageData && ctx) {
-  //     const image = new Image();
-  //     image.src = savedImageData;
-  //     image.onload = () => {
-  //       ctx.drawImage(image, 0, 0);
-  //     };
-  //   }
-  // };
+    if (savedImageData && ctx) {
+      const image = new Image();
+      image.src = savedImageData;
+      image.onload = () => {
+        ctx.drawImage(image, 0, 0);
+      };
+    }
+  };
 
   const handleSave = async() => {
-    
-       setTimeout(() => {
-      
-       setModal(true)
-       setLoading(false)
-    
-       }, 100);
+        refreshPage()
 
+       setTimeout(() => {
+
+       setModal(true)
+
+       }, 100);
        
-         
+
      };
 
   const startTouchDrawing = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    // e.preventDefault()
+    e.preventDefault()
     if (canvasRef.current && ctxRef.current) {
       setIsDrawing(true);
       const { clientX, clientY } = e.touches[0]; 
             const rect = canvasRef.current.getBoundingClientRect(); 
-  
+
       const offsetX = clientX - rect.left; 
       const offsetY = clientY - rect.top;
-  
+
       setLastX(offsetX);
       setLastY(offsetY);
-  
+
       ctxRef.current.beginPath();
       ctxRef.current.moveTo(offsetX, offsetY);
       ctxRef.current.lineWidth = brushSize;
       ctxRef.current.strokeStyle = brushColor;
     }
   };
-  
+
   const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
-  //  e.preventDefault()
+   e.preventDefault()
    setIsPenColor(false)
 setIsBgColor(false)
     if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
-  
+
     const { clientX, clientY } = e.touches[0];
     const rect = canvasRef.current.getBoundingClientRect();
-  
+
     const offsetX = clientX - rect.left; 
     const offsetY = clientY - rect.top;
-  
+
     localStorage.setItem('isStart', 'true')  
     const savedIsStart = localStorage.getItem('isStart');
 
@@ -348,11 +333,11 @@ setIsBgColor(false)
       ctxRef.current.lineTo(offsetX, offsetY);
       ctxRef.current.stroke();
     }
-  
+
     setLastX(offsetX);
     setLastY(offsetY);
   };
-  
+
   const stopTouchDrawing = () => {
     if (canvasRef.current && ctxRef.current) {
       setIsDrawing(false);
@@ -364,52 +349,53 @@ setIsBgColor(false)
       saveCanvasImage();
     }
   };
-  
- 
+
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+  
   setIsStart(true)
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result;
-  
+
         if (typeof result === 'string') {
           const img = new Image();
           img.src = result;
           img.onload = () => {
             const canvas = canvasRef.current;
             const ctx = ctxRef.current;
-            
+
             if (canvas && ctx) {
               ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
               const canvasWidth = canvas.width;
               const canvasHeight = canvas.height;
-  
+
               const imageAspectRatio = img.width / img.height;
               let imgWidth = canvasWidth;
               let imgHeight = imgWidth / imageAspectRatio;
-  
+
               //  if (imgHeight > canvasHeight) {
                 imgHeight = canvasHeight;
               // //   // imgWidth = imgHeight * imageAspectRatio;
 
-                
+
               //  }
-  
+
               const x = (canvasWidth - imgWidth) /2;
               const y = (canvasHeight - imgHeight) / 2;
-  
+
               ctx.drawImage(img, x, y, imgWidth, imgHeight);
             }
           };
         }
       };
-  
+
       reader.readAsDataURL(file);
     }
-  
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -465,7 +451,7 @@ setIsPlaying(!isPlaying)
         className=' absolute top-6 right-[-10px]' />
 )}
 </div>
-    
+
 <button className="text-xl rounded-full" onClick={()=>{
   clickSound()
   clearCanvas()
@@ -477,7 +463,7 @@ setIsPlaying(!isPlaying)
           undo()}}>
           <FaUndo className="cursor-pointer" size={30} />
         </button>
-        
+
         <button className="text-xl  rounded-full" onClick={()=>{
           clickSound()
           redo()}}>
@@ -497,7 +483,7 @@ setIsPlaying(!isPlaying)
         className='  z-20  absolute  top-8 w-12 right-[-10px] ' />)}
 
         </div>
-      
+
 
         <div className=' relative'>
         <button className="text-xl relative  rounded-full" onClick={()=>{
@@ -519,17 +505,18 @@ setIsPlaying(!isPlaying)
 
 
         </div>  
-        
+
         )}
-         
+
         </div>
-     
+
         <button className="text-xl  rounded-full" onClick={()=>{
           clickSound()
           handleSave()}}>
           <CiExport className="cursor-pointer" size={30} />
         </button>
-        
+
+       
 
         <div className=' relative'>
 
@@ -545,7 +532,7 @@ setIsPlaying(!isPlaying)
          //  accept="*/*"
 
          accept="image/*"
-             
+
          onChange={handleImageUpload} />
 
         </button> 
@@ -562,7 +549,6 @@ setIsPlaying(!isPlaying)
     <div className='w-full mx-6 lg:mx-0 lg:w-[30%] h-[150px] flex justify-center items-center rounded-md bg-black '>
        <div className='flex gap-4  m-auto'>
          <button onClick={()=>{saveImage()
-
         setLoading(true)
        setTimeout(()=>{
 // refreshPage()
@@ -585,7 +571,7 @@ setIsPlaying(!isPlaying)
           style={{
             border: "1px solid #000000",
             backgroundColor: canvasColor,
-            
+
           }}
           onMouseDown={startDrawing}
           onMouseMove={draw}
@@ -596,20 +582,14 @@ setIsPlaying(!isPlaying)
           onTouchEnd={stopTouchDrawing}  
         />
       </div>
-        
+
       </div>
-    
+
     </div>
   );
 };
 
 export default Canvas;
-
-
-
-
-
-
 
 
 
