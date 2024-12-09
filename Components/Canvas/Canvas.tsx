@@ -24,7 +24,7 @@ const Canvas = () => {
   const [isPen, setIsPen] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
   const [isStart, setIsStart] = useState<boolean>(false);
-  const [image, setImage] = useState<any>(null);
+  // const [image, setImage] = useState<any>(null);
   const [drawingHistory, setDrawingHistory] = useState<ImageData[]>([]);
   const [redoHistory, setRedoHistory] = useState<ImageData[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -117,6 +117,23 @@ const [isPlaying,setIsPlaying]=useState(true)
       ctxRef.current.strokeStyle = brushColor;
       // setIsStart(true);
     }
+
+    if(canvasRef.current && canvasRef.current){
+      if (drawingHistory.length === 0) {
+        const ctx = ctxRef.current;
+        const imageData = ctx?.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
+        if (imageData) {
+            setDrawingHistory([imageData]);
+        }
+    }
+  
+
+    }
+   
+
+
+
+
   };
 
   const draw = (e: any) => {
@@ -155,8 +172,14 @@ setIsBgColor(false)
         ...drawingHistory,
         ctxRef.current.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height),
       ]);
+
+      const newImageData = ctxRef.current.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
+      setDrawingHistory((prevHistory) => [...prevHistory, newImageData]);
+
       saveCanvasImage();
     }
+
+    
   };
 
   const clearCanvas = () => {
@@ -175,29 +198,113 @@ localStorage.setItem("isStart","false")
 
   };
 
+
   const undo = () => {
-    if (drawingHistory.length > 0) {
-      const lastState = drawingHistory[drawingHistory.length - 1];
+    if (drawingHistory.length >1) {
+
+      const lastState = drawingHistory[drawingHistory.length -2] 
       const ctx = ctxRef.current;
       ctx?.putImageData(lastState, 0, 0);
       setDrawingHistory(drawingHistory.slice(0, -1));
       setRedoHistory([lastState, ...redoHistory]);
-    }
-    else{
-      setDrawingHistory(drawingHistory.slice(0, -2));
+      console.log("unoooooo",drawingHistory.length);
 
     }
+    else{
+      if (canvasRef.current && ctxRef.current) {
+        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+    
+   
   };
 
   const redo = () => {
-    if (redoHistory.length > 0) {
+    if (redoHistory.length > 1) {
       const lastRedoState = redoHistory[0];
       const ctx = ctxRef.current;
       ctx?.putImageData(lastRedoState, 0, 0);
       setDrawingHistory([...drawingHistory, lastRedoState]);
       setRedoHistory(redoHistory.slice(1));
     }
+    else if(redoHistory.length == 0){
+      
+      if (canvasRef.current && ctxRef.current) {
+        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        // ctxRef.current.fillStyle = "#ffffff";  // Beyaz bir arka plan ile temizle
+        ctxRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    } 
+   
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     if (drawingHistory.length >0) {
+//       const lastState = drawingHistory[drawingHistory.length - 1];
+//       const ctx = ctxRef.current;
+//       ctx?.putImageData(lastState, 0, 0);
+//       setDrawingHistory(drawingHistory.slice(0, -1));
+//       setRedoHistory([lastState, ...redoHistory]);
+//       console.log("undooo",drawingHistory.length);
+      
+//     }
+// //     else if(drawingHistory.length=1){
+// //       setDrawingHistory(drawingHistory.slice(0, -2));
+// // setDrawingHistory([])
+
+
+// // // clearCanvas()
+// //     }
+//   };
+
+
+//   const undo = () => {
+//     if (drawingHistory.length > 1) { // İlk çizim zaten geçmişte var
+//         const lastState = drawingHistory[drawingHistory.length - 2];
+//         const ctx = ctxRef.current;
+//         ctx?.putImageData(lastState, 0, 0);
+//         setDrawingHistory(drawingHistory.slice(0, -1)); // Son kaydı sil
+//         setRedoHistory([lastState, ...redoHistory]); // Redo geçmişini güncelle
+//     } else {
+//         // İlk çizimi geri almak için boş bir canvas ile temizleyebilirsiniz
+//         const ctx = ctxRef.current;
+//         ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+//         setDrawingHistory([]);
+//         setRedoHistory([]);
+//     }
+// };
+
+
+
+
+
+
+  // const redo = () => {
+  //   if (redoHistory.length > 0) {
+  //     const lastRedoState = redoHistory[0];
+  //     const ctx = ctxRef.current;
+  //     ctx?.putImageData(lastRedoState, 0, 0);
+  //     setDrawingHistory([...drawingHistory, lastRedoState]);
+  //     setRedoHistory(redoHistory.slice(1));
+  //   }
+  // };
 
    const changeBackgroundColor = (color: string) => {
     if (canvasRef.current && ctxRef.current) {
@@ -285,7 +392,6 @@ localStorage.setItem("isStart","false")
      };
 
   const startTouchDrawing = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault()
     if (canvasRef.current && ctxRef.current) {
       setIsDrawing(true);
       const { clientX, clientY } = e.touches[0]; 
@@ -305,7 +411,6 @@ localStorage.setItem("isStart","false")
   };
 
   const drawTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
-   e.preventDefault()
    setIsPenColor(false)
 setIsBgColor(false)
     if (!isDrawing || !canvasRef.current || !ctxRef.current) return;
@@ -348,6 +453,7 @@ setIsBgColor(false)
       ]);
       saveCanvasImage();
     }
+    
   };
 
 
