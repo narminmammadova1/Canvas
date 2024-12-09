@@ -92,7 +92,7 @@ const [isPlaying,setIsPlaying]=useState(true)
       };
     }
 
-    const savedIsStart = localStorage.getItem('isStart');
+    const savedIsStart = sessionStorage.getItem('isStart');
     if (savedIsStart === 'true') {
       setIsStart(true);
     } else {
@@ -142,8 +142,8 @@ setIsPenColor(false)
 setIsBgColor(false)
 
     const { offsetX, offsetY } = e.touches ? e.touches[0] : e.nativeEvent;
-    localStorage.setItem('isStart', 'true')  
-    const savedIsStart = localStorage.getItem('isStart');
+    sessionStorage.setItem('isStart', 'true')  
+    const savedIsStart = sessionStorage.getItem('isStart');
 
     if (savedIsStart === 'true') {
       setIsStart(true);
@@ -194,7 +194,7 @@ setIsBgColor(false)
     setDrawingHistory([]);
     setRedoHistory([]);
     setIsStart(false);
-localStorage.setItem("isStart","false")
+sessionStorage.setItem("isStart","false")
 
   };
 
@@ -239,72 +239,6 @@ localStorage.setItem("isStart","false")
    
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//     if (drawingHistory.length >0) {
-//       const lastState = drawingHistory[drawingHistory.length - 1];
-//       const ctx = ctxRef.current;
-//       ctx?.putImageData(lastState, 0, 0);
-//       setDrawingHistory(drawingHistory.slice(0, -1));
-//       setRedoHistory([lastState, ...redoHistory]);
-//       console.log("undooo",drawingHistory.length);
-      
-//     }
-// //     else if(drawingHistory.length=1){
-// //       setDrawingHistory(drawingHistory.slice(0, -2));
-// // setDrawingHistory([])
-
-
-// // // clearCanvas()
-// //     }
-//   };
-
-
-//   const undo = () => {
-//     if (drawingHistory.length > 1) { // İlk çizim zaten geçmişte var
-//         const lastState = drawingHistory[drawingHistory.length - 2];
-//         const ctx = ctxRef.current;
-//         ctx?.putImageData(lastState, 0, 0);
-//         setDrawingHistory(drawingHistory.slice(0, -1)); // Son kaydı sil
-//         setRedoHistory([lastState, ...redoHistory]); // Redo geçmişini güncelle
-//     } else {
-//         // İlk çizimi geri almak için boş bir canvas ile temizleyebilirsiniz
-//         const ctx = ctxRef.current;
-//         ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-//         setDrawingHistory([]);
-//         setRedoHistory([]);
-//     }
-// };
-
-
-
-
-
-
-  // const redo = () => {
-  //   if (redoHistory.length > 0) {
-  //     const lastRedoState = redoHistory[0];
-  //     const ctx = ctxRef.current;
-  //     ctx?.putImageData(lastRedoState, 0, 0);
-  //     setDrawingHistory([...drawingHistory, lastRedoState]);
-  //     setRedoHistory(redoHistory.slice(1));
-  //   }
-  // };
 
    const changeBackgroundColor = (color: string) => {
     if (canvasRef.current && ctxRef.current) {
