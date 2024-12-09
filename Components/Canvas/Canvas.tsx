@@ -208,6 +208,7 @@ sessionStorage.setItem("isStart","false")
       setDrawingHistory(drawingHistory.slice(0, -1));
       setRedoHistory([lastState, ...redoHistory]);
       console.log("unoooooo",drawingHistory.length);
+      console.log("redoooooo",redoHistory.length);
 
     }
     else{
@@ -355,8 +356,8 @@ setIsBgColor(false)
     const offsetX = clientX - rect.left; 
     const offsetY = clientY - rect.top;
 
-    localStorage.setItem('isStart', 'true')  
-    const savedIsStart = localStorage.getItem('isStart');
+    sessionStorage.setItem('isStart', 'true')  
+    const savedIsStart = sessionStorage.getItem('isStart');
 
     if (savedIsStart === 'true') {
       setIsStart(true);
@@ -467,7 +468,8 @@ setIsPlaying(!isPlaying)
 ////////
 
   const disabledChange=isStart
-const disabledUndo=!isStart
+const disabledUndo=!isStart  || drawingHistory.length<2 
+const disabledRedo= redoHistory.length<1
   return (
     <div className="flex-col  border-4 border-gray-800">
       <div className='flex '>
@@ -478,7 +480,7 @@ const disabledUndo=!isStart
       </button>
 
 <div className=' relative'>
-<button disabled={disabledChange} className={`text-xl font-bold  rounded-full ${disabledChange ? "opacity-50 cursor-not-allowed" : ""}`}onClick={()=>{
+<button disabled={disabledChange} className={`text-xl font-bold  rounded-full ${disabledChange ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}onClick={()=>{
  clickSound()
  setIsBgColor(true)
 
@@ -503,16 +505,16 @@ const disabledUndo=!isStart
         onClick={()=>{
           clickSound()
           undo()}}>
-          <FaUndo className="cursor-pointer" size={30} />
+          <FaUndo className="" size={30} />
         </button>
 
-        <button className="text-xl  rounded-full"
-                disabled={disabledUndo}
+        <button className={`text-xl  rounded-full  ${disabledRedo ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={disabledRedo}
 
         onClick={()=>{
           clickSound()
           redo()}}>
-          <FaRedo className={` ${disabledUndo ? "opacity-50 cursor-not-allowed" : ""} cursor-pointer`} size={30} />
+          <FaRedo size={30} />
         </button>
         <div className=' relative'>
         <button className="text-xl  rounded-full" onClick={()=>{
