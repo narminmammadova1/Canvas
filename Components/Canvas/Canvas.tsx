@@ -533,7 +533,7 @@ setIsPlaying(!isPlaying)
 ////////
 
   const disabledChange=isStart
-
+const disabledUndo=!isStart
   return (
     <div className="flex-col  border-4 border-gray-800">
       <div className='flex '>
@@ -564,16 +564,21 @@ setIsPlaying(!isPlaying)
 }}>
           <TbHttpDelete className="cursor-pointer" size={30} />
         </button>
-        <button className="text-xl  rounded-full" onClick={()=>{
+        <button className={`text-xl ${disabledUndo ? "opacity-50 cursor-not-allowed" : ""}  rounded-full`}
+        disabled={disabledUndo}
+        onClick={()=>{
           clickSound()
           undo()}}>
           <FaUndo className="cursor-pointer" size={30} />
         </button>
 
-        <button className="text-xl  rounded-full" onClick={()=>{
+        <button className="text-xl  rounded-full"
+                disabled={disabledUndo}
+
+        onClick={()=>{
           clickSound()
           redo()}}>
-          <FaRedo className="cursor-pointer" size={30} />
+          <FaRedo className={` ${disabledUndo ? "opacity-50 cursor-not-allowed" : ""} cursor-pointer`} size={30} />
         </button>
         <div className=' relative'>
         <button className="text-xl  rounded-full" onClick={()=>{
